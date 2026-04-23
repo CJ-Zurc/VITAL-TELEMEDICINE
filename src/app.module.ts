@@ -4,9 +4,10 @@ import { AppService } from './app.service';
 import { ConsultationModule } from './consultation/consultation.module';
 import { ProviderModule } from './provider/provider.module';
 import { IntegrationModule } from './integration/integration.module';
+import { InternalModule } from './internal/internal.module';
 
 @Module({
-  imports: [ConsultationModule, ProviderModule, IntegrationModule],
+  imports: [ConsultationModule, ProviderModule, IntegrationModule, InternalModule],
   controllers: [AppController],
   providers: [AppService],
 })

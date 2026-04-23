@@ -1,98 +1,83 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# VITAL-TELEMEDICINE
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Telemedicine domain service for the BGH VITAL platform.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+This repository now follows the same top-level pattern used by the other BGH services:
 
-## Description
+- canonical docs live in [`docs/`](docs/README.md)
+- AI agent rules live in [`.agents/`](.agents/rules/telemedicine-context-documents.md)
+- the checked-in NestJS application code lives under `src/`
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Current Repository Reality
 
-## Project setup
+The checked-in codebase is still early-stage:
 
-```bash
-$ npm install
+- one NestJS application exists at the repository root
+- `src/main.ts` boots a single HTTP app on `PORT` or `3000`
+- the current route surface is mostly starter-grade:
+  - `GET /` returns the default hello response
+  - `GET /internal/users/:userId/roles` returns an empty role list placeholder for Auth aggregation
+  - consultation, provider, and integration modules exist without exposed controller routes
+- the repo now includes a Dockerfile plus a repo-local compose stack for the app
+- no Gateway trust middleware, direct Auth client, or local stale-session signaling is implemented yet
+- the checked-in workspace Gateway currently routes `/vital`, `/vital/public*`, `/vital/staff*`, and other unmatched `/vital/*` paths to this repo's domain boundary, but the repo still lacks the business route handlers and trust middleware needed to satisfy that contract
+
+The documentation in this repository is intentionally hybrid:
+
+- current-state sections describe what exists in the repo today
+- target-state sections describe the integration contract this service should follow as it joins the wider BGH platform
+
+## Start Here
+
+1. [`docs/README.md`](docs/README.md)
+2. [`docs/architecture.md`](docs/architecture.md)
+3. [`docs/integration_guide.md`](docs/integration_guide.md)
+4. [`docs/security.md`](docs/security.md)
+5. [`.agents/rules/telemedicine-context-documents.md`](.agents/rules/telemedicine-context-documents.md)
+
+## Product Intent
+
+This repository is intended to own VITAL telemedicine-domain backend behavior such as:
+
+- consultation session workflows
+- telemedicine provider operations
+- telemedicine-specific third-party integrations
+- remote-care business rules that remain inside the `vital` system context
+- integration with the shared BGH Gateway and Auth services under the `vital` system slug
+
+Those goals provide architectural direction, but they should not be described as implemented unless the code under `src/` already supports them.
+
+## Repository Layout
+
+```text
+VITAL-TELEMEDICINE/
+|-- .agents/                  # Repo-local AI guidance
+|-- docs/                     # Canonical documentation for this repository
+|-- src/                      # NestJS application source
+|-- test/                     # E2E test setup
+|-- Dockerfile               # Container build for the NestJS app
+|-- docker-compose.yml        # Repo-local app stack
+|-- package.json
+`-- README.md
 ```
 
-## Compile and run the project
+## Local Development
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm install
+npm run start:dev
 ```
 
-## Run tests
+Repo-local Docker:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose up -d --build
 ```
 
-## Deployment
+## Documentation Promise
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+This repository should stay truthful:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- do not document telemedicine APIs as live unless they exist in `src/`
+- do not document separate public Gateway routes for this repo unless the Gateway config is checked in and aligned
+- do document the Gateway/Auth contracts this service must follow so future implementation work stays consistent with the BGH workspace
